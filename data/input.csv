@@ -1,0 +1,101 @@
+trip_date,manufacturer,model,body_type,segment,battery_kwh,range_km,charging_type,price_eur,origin_city,origin_country,destination_city,destination_country,distance_km,co2_g_per_km,grid_intensity_gco2_per_kwh
+2025-02-10,BMW Group,iX3,Crossover,Mid-size,80,463,DC,70157,New York,United States,Casablanca,Morocco,5813,58,350
+2025-10-13,Tata Motors,Nexon EV,Compact SUV,Luxury,40,224,AC,111873,Singapore,Singapore,London,United Kingdom,10852,55,250
+2025-10-21,Volvo Cars,EX30,Sedan,Premium,69,375,AC,99949,New York,United States,Los Angeles,United States,3944,70,350
+2025-09-14,Volkswagen AG,ID.3,Hatchback,Luxury,58,302,DC,106159,Singapore,Singapore,Santiago,Chile,16405,42,250
+2025-06-03,Audi AG,Q4 e-tron,Coupe,Mid-size,77,433,AC,76809,Milan,Italy,Buenos Aires,Argentina,11168,56,400
+2025-09-18,Hyundai Motor Company,IONIQ 6,Sedan,Luxury,77,394,AC,49791,Austin,United States,Tokyo,Japan,10561,56,400
+2025-10-14,Wallyscar,Iris EV,Coupe,Mid-size,35,204,AC,37302,New York,United States,Melbourne,Australia,16671,51,350
+2025-03-20,Audi AG,Q8 e-tron,Sedan,Premium,106,545,DC,102853,Santiago,Chile,Beijing,China,19058,47,300
+2025-05-25,Rivian Automotive,R1S,Compact SUV,Compact,135,751,AC,106234,Delhi,India,Tunis,Tunisia,6223,50,600
+2025-10-13,"Tesla, Inc.",Model Y,Compact SUV,Compact,82,422,AC,100869,Seoul,South Korea,Melbourne,Australia,8548,52,250
+2025-04-11,Tata Motors,Tiago EV,Crossover,Premium,35,189,DC,106811,Munich,Germany,Seoul,South Korea,8569,66,300
+2025-01-24,VinFast,VF e34,Sedan,Luxury,60,353,DC,92777,Austin,United States,Sydney,Australia,13627,49,400
+2025-10-05,Rivian Automotive,R1S,Sedan,Compact,135,742,AC,112742,Melbourne,Australia,Paris,France,16787,60,300
+2025-04-04,Renault Group,Mégane E-Tech,Coupe,Premium,60,339,AC,96186,Tunis,Tunisia,Melbourne,Australia,16053,65,500
+2025-01-25,VinFast,VF e34,Hatchback,Mid-size,60,329,AC,74951,Tunis,Tunisia,Sydney,Australia,16491,40,500
+2025-02-15,BYD Co. Ltd.,Atto 3,Sedan,Luxury,60,332,AC,97945,Madrid,Spain,Hanoi,Vietnam,10056,43,350
+2025-01-18,Rivian Automotive,R1T,Coupe,Premium,135,775,DC,27221,Singapore,Singapore,Johannesburg,South Africa,8664,51,250
+2025-06-12,"Tesla, Inc.",Model 3 Long Range,Sedan,Mid-size,82,471,DC,62385,Tehran,Iran,Sydney,Australia,12902,70,650
+2025-06-28,Rivian Automotive,R1S,Coupe,Luxury,135,768,DC,90860,Madrid,Spain,Hanoi,Vietnam,10056,63,350
+2025-10-08,Tata Motors,Tiago EV,Sedan,Compact,35,206,DC,44697,Milan,Italy,Johannesburg,South Africa,8163,43,400
+2025-05-09,SAIPA,Saina EV,Compact SUV,Premium,40,224,AC,32952,Toronto,Canada,Johannesburg,South Africa,13329,45,250
+2025-03-19,Hyundai Motor Company,IONIQ 5,Crossover,Premium,77,397,AC,90856,Tehran,Iran,Mumbai,India,2799,57,650
+2025-03-22,Kia Corporation,EV6,SUV,Compact,77,409,DC,107658,Toronto,Canada,Berlin,Germany,6492,70,250
+2025-03-29,Volvo Cars,EX30,Coupe,Luxury,69,398,AC,62258,Buenos Aires,Argentina,Vancouver,Canada,11274,46,350
+2025-08-07,BMW Group,iX3,Crossover,Premium,80,442,AC,55910,London,United Kingdom,Lagos,Nigeria,4997,61,300
+2025-07-06,BYD Co. Ltd.,Dolphin,Hatchback,Mid-size,60,302,AC,119070,Toronto,Canada,Ho Chi Minh City,Vietnam,13946,58,250
+2025-07-09,BYD Co. Ltd.,Atto 3,Hatchback,Compact,60,354,AC,104251,Sydney,Australia,Paris,France,16957,69,300
+2025-07-16,"Tesla, Inc.",Model Y,Coupe,Compact,82,430,AC,97393,Toronto,Canada,Singapore,Singapore,15009,57,250
+2025-06-01,Nissan Motor Co.,Ariya,Hatchback,Mid-size,87,437,DC,97857,Singapore,Singapore,Milan,Italy,10265,59,250
+2025-10-16,BYD Co. Ltd.,Atto 3,Coupe,Premium,60,339,AC,100703,Santiago,Chile,Lagos,Nigeria,8949,41,300
+2025-08-09,Hyundai Motor Company,IONIQ 6,Compact SUV,Luxury,77,458,AC,38663,Singapore,Singapore,Nairobi,Kenya,7463,41,250
+2025-08-30,Renault Group,Mégane E-Tech,Compact SUV,Premium,60,343,AC,49095,London,United Kingdom,Lagos,Nigeria,4997,65,300
+2025-05-19,Neo Motors,M1,Hatchback,Mid-size,45,231,DC,100716,Toronto,Canada,Tokyo,Japan,10374,56,250
+2025-07-19,Mercedes-Benz Group,EQE 350,Hatchback,Luxury,90,487,AC,103601,Mumbai,India,Ho Chi Minh City,Vietnam,3745,41,550
+2025-08-25,Neo Motors,M1,Sedan,Luxury,45,252,AC,64725,Cairo,Egypt,Tehran,Iran,1983,67,550
+2025-03-04,Tata Motors,Tiago EV,SUV,Compact,35,192,AC,101199,Madrid,Spain,Melbourne,Australia,17312,59,350
+2025-01-13,Rivian Automotive,R1T,Crossover,Premium,135,678,DC,96351,Melbourne,Australia,Munich,Germany,16113,63,300
+2025-09-13,Renault Group,ZOE R135,Sedan,Mid-size,52,281,DC,118706,Tunis,Tunisia,Cairo,Egypt,2091,68,500
+2025-01-27,Neo Motors,M1,Sedan,Mid-size,45,237,AC,90822,London,United Kingdom,Tunis,Tunisia,1825,70,300
+2025-06-15,VinFast,VF 8,Hatchback,Luxury,82,416,AC,114752,Cairo,Egypt,London,United Kingdom,3513,66,550
+2025-10-26,Wallyscar,Iris EV,Compact SUV,Premium,35,182,DC,68263,London,United Kingdom,Sydney,Australia,16989,58,300
+2025-07-16,Hyundai Motor Company,IONIQ 5,Hatchback,Luxury,77,424,AC,87430,Amsterdam,Netherlands,Tehran,Iran,4070,63,250
+2025-07-16,Volkswagen AG,ID.3,SUV,Compact,58,323,AC,31309,Buenos Aires,Argentina,Melbourne,Australia,11633,68,350
+2025-05-25,Tata Motors,Nexon EV,Crossover,Luxury,40,203,AC,47494,Barcelona,Spain,Tunis,Tunisia,859,41,350
+2025-02-10,Neo Motors,M1,Hatchback,Premium,45,234,AC,74882,Shanghai,China,Munich,Germany,8796,48,500
+2025-10-19,Wallyscar,Iris EV,Sedan,Compact,35,181,DC,90169,Lagos,Nigeria,Austin,United States,10710,41,700
+2025-07-31,Volkswagen AG,ID.4,Sedan,Premium,77,387,AC,108277,Sydney,Australia,Hanoi,Vietnam,7748,51,300
+2025-06-25,"Tesla, Inc.",Model S Dual Motor,Compact SUV,Premium,100,572,AC,117577,Shanghai,China,Delhi,India,4255,66,500
+2025-04-20,Tata Motors,Nexon EV,Crossover,Compact,40,222,DC,40671,Ho Chi Minh City,Vietnam,Berlin,Germany,9287,57,500
+2025-05-04,SAIPA,Saina EV,Hatchback,Luxury,40,223,AC,44989,Shanghai,China,Paris,France,9283,50,500
+2025-01-15,Volvo Cars,XC40 Recharge,Hatchback,Premium,78,401,AC,79381,Johannesburg,South Africa,Casablanca,Morocco,7613,54,650
+2025-07-05,Volvo Cars,XC40 Recharge,Sedan,Compact,78,439,DC,76027,Los Angeles,United States,London,United Kingdom,8776,60,400
+2025-04-15,Volvo Cars,EX30,Coupe,Mid-size,69,378,AC,77941,Austin,United States,Milan,Italy,8855,57,400
+2025-09-13,Volvo Cars,XC40 Recharge,Crossover,Luxury,78,446,AC,64779,Paris,France,Munich,Germany,686,41,250
+2025-06-24,Audi AG,Q4 e-tron,Compact SUV,Compact,77,450,AC,102443,Hanoi,Vietnam,Melbourne,Australia,7693,45,450
+2025-08-05,Volvo Cars,XC40 Recharge,Crossover,Luxury,78,457,DC,65086,Melbourne,Australia,Nairobi,Kenya,11508,48,300
+2025-10-08,Volvo Cars,EX30,Hatchback,Compact,69,411,DC,113774,Tokyo,Japan,Milan,Italy,9738,44,200
+2025-03-06,Neo Motors,M1,Sedan,Mid-size,45,242,DC,90127,Tehran,Iran,Vancouver,Canada,10576,44,650
+2025-05-01,Kia Corporation,Niro EV,Coupe,Compact,64,347,DC,85782,Santiago,Chile,Berlin,Germany,12506,60,300
+2025-07-25,BMW Group,iX3,Hatchback,Luxury,80,410,DC,87928,Paris,France,Johannesburg,South Africa,8697,63,250
+2025-07-17,BYD Co. Ltd.,Atto 3,SUV,Mid-size,60,323,DC,62455,Toronto,Canada,Tehran,Iran,9908,69,250
+2025-07-10,Nissan Motor Co.,Ariya,Coupe,Compact,87,441,AC,81064,Nairobi,Kenya,Buenos Aires,Argentina,10409,57,400
+2025-02-09,Tata Motors,Nexon EV,SUV,Premium,40,216,AC,55237,Ho Chi Minh City,Vietnam,São Paulo,Brazil,16867,42,500
+2025-10-10,Neo Motors,M1,Coupe,Compact,45,255,DC,115186,Tehran,Iran,Madrid,Spain,4785,60,650
+2025-05-21,BMW Group,iX3,Sedan,Mid-size,80,444,DC,102667,Johannesburg,South Africa,Cairo,Egypt,6233,48,650
+2025-04-10,Renault Group,Mégane E-Tech,Coupe,Premium,60,358,AC,98689,Singapore,Singapore,Berlin,Germany,9917,42,250
+2025-07-04,Hyundai Motor Company,IONIQ 6,Compact SUV,Compact,77,405,DC,114235,Santiago,Chile,Beijing,China,19058,63,300
+2025-05-20,SEA Electric,SEA E4V,Crossover,Premium,70,367,AC,57440,Singapore,Singapore,Hanoi,Vietnam,2187,65,250
+2025-04-06,Nissan Motor Co.,Ariya,Sedan,Mid-size,87,505,AC,118706,Paris,France,Sydney,Australia,16957,57,250
+2025-03-26,"Tesla, Inc.",Model 3 Long Range,Compact SUV,Premium,82,464,AC,54083,Mumbai,India,Sydney,Australia,10149,62,550
+2025-06-20,Mercedes-Benz Group,EQA 250,SUV,Compact,70,409,DC,94813,New York,United States,Casablanca,Morocco,5813,45,350
+2025-06-07,BYD Co. Ltd.,Atto 3,SUV,Premium,60,345,AC,90867,Munich,Germany,Shanghai,China,8796,64,300
+2025-06-24,Jet Motors,Jet EV,Sedan,Premium,50,283,DC,89638,Madrid,Spain,Milan,Italy,1190,69,350
+2025-03-24,Great Wall Motors,Ora Good Cat,Sedan,Luxury,63,359,DC,80176,Casablanca,Morocco,Tokyo,Japan,11618,46,450
+2025-01-11,SEA Electric,SEA E4V,Hatchback,Compact,70,379,AC,58848,Tunis,Tunisia,Cairo,Egypt,2091,50,500
+2025-02-20,Tata Motors,Tiago EV,Hatchback,Mid-size,35,188,DC,75213,São Paulo,Brazil,Tunis,Tunisia,8951,40,400
+2025-03-28,Volkswagen AG,ID.7,Crossover,Premium,86,454,AC,40122,Berlin,Germany,Munich,Germany,504,50,300
+2025-03-15,Great Wall Motors,Ora Good Cat,Sedan,Compact,63,326,DC,104264,Hanoi,Vietnam,Amsterdam,Netherlands,8893,48,450
+2025-07-04,Kia Corporation,EV6,Sedan,Luxury,77,434,AC,45332,Sydney,Australia,Amsterdam,Netherlands,16637,52,300
+2025-10-28,Tata Motors,Tiago EV,Coupe,Premium,35,175,DC,107772,Mumbai,India,Sydney,Australia,10149,59,550
+2025-09-08,Mercedes-Benz Group,EQE 350,Crossover,Mid-size,90,455,DC,79389,Johannesburg,South Africa,Delhi,India,8024,70,650
+2025-05-29,Ford Motor Company,Mustang Mach-E,Compact SUV,Compact,91,502,AC,50647,Madrid,Spain,Casablanca,Morocco,834,70,350
+2025-05-18,"Tesla, Inc.",Model Y,Compact SUV,Compact,82,491,DC,72892,Lyon,France,Munich,Germany,576,46,250
+2025-08-24,Jet Motors,Jet EV,Coupe,Mid-size,50,262,DC,107185,Ho Chi Minh City,Vietnam,Vancouver,Canada,11774,49,500
+2025-07-01,Neo Motors,M1,SUV,Luxury,45,266,DC,70851,Shanghai,China,Madrid,Spain,10277,50,500
+2025-07-09,Neo Motors,M1,Sedan,Compact,45,264,DC,51397,Mumbai,India,Los Angeles,United States,14008,45,550
+2025-08-05,Ford Motor Company,Mustang Mach-E,Sedan,Compact,91,510,AC,106218,Milan,Italy,Buenos Aires,Argentina,11168,64,400
+2025-07-18,Nissan Motor Co.,Ariya,Coupe,Premium,87,491,DC,109372,Casablanca,Morocco,Singapore,Singapore,11899,65,450
+2025-10-03,"Tesla, Inc.",Model S Dual Motor,Coupe,Compact,100,590,AC,88858,Beijing,China,Seoul,South Korea,954,69,550
+2025-06-27,Rivian Automotive,R1S,Sedan,Compact,135,712,AC,100588,Melbourne,Australia,Casablanca,Morocco,17505,70,300
+2025-06-16,Volvo Cars,XC40 Recharge,Coupe,Mid-size,78,409,DC,104051,Ho Chi Minh City,Vietnam,London,United Kingdom,10213,50,500
+2025-04-23,Renault Group,Mégane E-Tech,Crossover,Mid-size,60,303,AC,115877,Buenos Aires,Argentina,Berlin,Germany,11887,70,350
+2025-08-07,VinFast,VF 8,SUV,Mid-size,82,476,DC,101666,Los Angeles,United States,Berlin,Germany,9332,65,400
+2025-01-27,"Tesla, Inc.",Model 3 Long Range,Compact SUV,Mid-size,82,440,AC,46763,Lagos,Nigeria,Casablanca,Morocco,3201,40,700
+2025-03-27,SAIPA,Saina EV,Sedan,Luxury,40,221,DC,36136,Buenos Aires,Argentina,Tehran,Iran,13768,59,350
+2025-10-03,Great Wall Motors,Ora Good Cat,Compact SUV,Mid-size,63,341,DC,56596,Tunis,Tunisia,Casablanca,Morocco,1655,70,500
+2025-06-23,Rivian Automotive,R1S,Crossover,Premium,135,716,DC,116731,Cairo,Egypt,Delhi,India,4437,70,550
+2025-02-02,Volvo Cars,EX30,Compact SUV,Compact,69,377,DC,92836,Hanoi,Vietnam,Singapore,Singapore,2187,61,450
+2025-02-06,Rivian Automotive,R1S,Hatchback,Mid-size,135,682,DC,73077,Toronto,Canada,Buenos Aires,Argentina,8923,51,250
+2025-08-18,VinFast,VF e34,SUV,Luxury,60,307,AC,54449,Tehran,Iran,Seoul,South Korea,6569,66,650
