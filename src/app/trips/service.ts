@@ -1,5 +1,5 @@
 import { prisma } from "../../lib/prisma";
-import type { TripCreateDTO } from "../../types/dto";
+import type { TripCreateDTO, TripUpdateDTO } from "../../types/dto";
 
 // Convert values from CSV to enum-friendly UPPER_SNAKE_CASE strings
 const toEnum = (raw: string) =>
@@ -148,5 +148,180 @@ export class TripService {
         destinationId: destination.id,
       },
     });
+  }
+
+  // Update a trip by ID
+  async updateTrip(id: number, patch: TripUpdateDTO) {
+    // Load current trip so we can backfill missing fields and know current links
+    const current = await prisma.trip.findUnique({
+      where: { id },
+      // include manufacturer/model/variant + origin/destination so we can fall back to existing values when needed
+      include: {
+        vehicleVariant: {
+          include: { model: { include: { manufacturer: true } } },
+        },
+        origin: true,
+        destination: true,
+      },
+    });
+    if (!current) throw new Error("Trip not found");
+
+    // --- Prepare potential foreign key changes ---
+
+    // Decide whether we need to touch vehicle-related entities
+    // If any of these fields are present, recompute the target variant
+    const touchesVehicle =
+      patch.manufacturer ||
+      patch.model ||
+      patch.body_type ||
+      patch.segment ||
+      patch.battery_kwh != null ||
+      patch.range_km != null ||
+      patch.charging_type ||
+      patch.price_eur != null;
+
+    let nextVehicleVariantId: number | undefined;
+    if (touchesVehicle) {
+      // Normalize/derive all needed values
+      // Use incoming values if provided; otherwise fall back to current values
+      const manufacturerName =
+        patch.manufacturer ?? current.vehicleVariant.model.manufacturer.name;
+      const modelName = patch.model ?? current.vehicleVariant.model.name;
+
+      // Enum fields need normalization if provided; otherwise keep what's already stored
+      const bodyType = patch.body_type
+        ? toEnum(patch.body_type)
+        : current.vehicleVariant.model.bodyType;
+      const segment = patch.segment
+        ? toEnum(patch.segment)
+        : current.vehicleVariant.model.segment;
+      const chargingType = patch.charging_type
+        ? toEnum(patch.charging_type)
+        : (current.vehicleVariant.chargingType as string);
+
+      // Specs and price: prefer incoming, else fall back to current values
+      const batteryKwh = patch.battery_kwh ?? current.vehicleVariant.batteryKwh;
+      const rangeKm = patch.range_km ?? current.vehicleVariant.rangeKm;
+      const priceEur =
+        patch.price_eur ??
+        current.vehicleVariant.priceEur.toNumber?.() ??
+        (current.vehicleVariant.priceEur as any);
+
+      // Upsert manufacturer > model > variant, and then capture the new variant id
+      const manufacturer = await prisma.manufacturer.upsert({
+        where: { name: manufacturerName },
+        update: {},
+        create: { name: manufacturerName },
+      });
+
+      const model = await prisma.vehicleModel.upsert({
+        where: {
+          manufacturerId_name: {
+            manufacturerId: manufacturer.id,
+            name: modelName,
+          },
+        },
+        // if a model already exists and bodyType/segment changed, update them
+        update: {
+          bodyType: bodyType as any,
+          segment: segment as any,
+        },
+        // if model doesn't exist, create with all details
+        create: {
+          name: modelName,
+          manufacturerId: manufacturer.id,
+          bodyType: bodyType as any,
+          segment: segment as any,
+        },
+      });
+
+      // Upsert variant (if specs changed, this will create a new variant)
+      const variant = await prisma.vehicleVariant.upsert({
+        where: {
+          modelId_batteryKwh_rangeKm_chargingType: {
+            modelId: model.id,
+            batteryKwh,
+            rangeKm,
+            chargingType: chargingType as any,
+          },
+        },
+        // If the variant already exists, still update the price since it can change over time
+        update: { priceEur: priceEur as any },
+        // If variant doesn't exist, create with all details
+        create: {
+          modelId: model.id,
+          batteryKwh,
+          rangeKm,
+          chargingType: chargingType as any,
+          priceEur: priceEur as any,
+        },
+      });
+
+      // Remember the new variant id so we can update the Trip later
+      nextVehicleVariantId = variant.id;
+    }
+
+    // Origin location changes: if either city or country is provided, (re)upsert and relink
+    let nextOriginId: number | undefined;
+    if (patch.origin_city || patch.origin_country) {
+      const originCity = patch.origin_city ?? current.origin.city;
+      const originCountry = patch.origin_country ?? current.origin.country;
+
+      // Locations are unique by (city, country), so upsert is safe here
+      const origin = await prisma.location.upsert({
+        where: { city_country: { city: originCity, country: originCountry } },
+        update: {},
+        create: { city: originCity, country: originCountry },
+      });
+      nextOriginId = origin.id;
+    }
+
+    // Destination location changes: same logic as origin
+    let nextDestinationId: number | undefined;
+    if (patch.destination_city || patch.destination_country) {
+      const destCity = patch.destination_city ?? current.destination.city;
+      const destCountry =
+        patch.destination_country ?? current.destination.country;
+
+      const destination = await prisma.location.upsert({
+        where: { city_country: { city: destCity, country: destCountry } },
+        update: {},
+        create: { city: destCity, country: destCountry },
+      });
+      nextDestinationId = destination.id;
+    }
+
+    // --- Update the Trip itself  ---
+    const updated = await prisma.trip.update({
+      where: { id },
+      data: {
+        ...(patch.trip_date
+          ? { tripDate: parseDateDDMMYYYY(patch.trip_date) }
+          : {}),
+          // Metric fields: only update if explicitly provided
+        ...(patch.distance_km != null ? { distanceKm: patch.distance_km } : {}),
+        ...(patch.co2_g_per_km != null
+          ? { co2_g_per_km: patch.co2_g_per_km }
+          : {}),
+        ...(patch.grid_intensity_gco2_per_kwh != null
+          ? { grid_intensity_gco2_per_kwh: patch.grid_intensity_gco2_per_kwh }
+          : {}),
+        // Foreign keys: only update if we computed a change above
+        ...(nextVehicleVariantId
+          ? { vehicleVariantId: nextVehicleVariantId }
+          : {}),
+        ...(nextOriginId ? { originId: nextOriginId } : {}),
+        ...(nextDestinationId ? { destinationId: nextDestinationId } : {}),
+      },
+      include: {
+        vehicleVariant: {
+          include: { model: { include: { manufacturer: true } } },
+        },
+        origin: true,
+        destination: true,
+      },
+    });
+
+    return updated;
   }
 }

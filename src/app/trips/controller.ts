@@ -4,7 +4,7 @@ import { TripService } from "./service";
 const service = new TripService();
 
 export const TripController = {
-  // GET /trips
+  // GET /trips (paginated list)
   getTrips: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { page, limit } = req.query;
@@ -19,6 +19,17 @@ export const TripController = {
     try {
       const created = await service.createFromCsvRow(req.body);
       res.status(201).json(created);
+    } catch (e) {
+      next(e);
+    }
+  },
+
+  // PUT /trips/:id (update Trip by ID)
+  updateTrip: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = Number(req.params.id);
+      const updated = await service.updateTrip(id, req.body);
+      res.json(updated);
     } catch (e) {
       next(e);
     }

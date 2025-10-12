@@ -3,4 +3,5 @@ import { TripController } from "./controller";
 
 export const TripRouter: Router = Router()
   .get("/", TripController.getTrips)
-  .post("/", TripController.createTrip);
+  .post("/", TripController.createTrip)
+  .put("/:id", TripController.updateTrip);
