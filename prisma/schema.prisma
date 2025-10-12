@@ -13,3 +13,131 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// Vehicle body classification (used by VehicleModel)
+enum BodyType {
+  COMPACT_SUV
+  COUPE
+  CROSSOVER
+  HATCHBACK
+  SEDAN
+  SUV
+}
+
+// Segment for a vehicle model
+enum Segment {
+  COMPACT
+  LUXURY
+  MID_SIZE
+  PREMIUM
+}
+
+// Type of charging system supported by a vehicle variant
+enum ChargingType {
+  AC
+  DC
+}
+
+// Represents vehicle manufacturer, e.g. BMW Group, Tesla, etc.
+model Manufacturer {
+  id     Int            @id @default(autoincrement())
+  name   String         @unique
+  // A manufacturer can produce many vehicle models
+  models VehicleModel[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Represents a specific vehicle model under a manufacturer, e.g. iX3, Nexon EV, etc.
+model VehicleModel {
+  id             Int          @id @default(autoincrement())
+  // Link to the manufacturer
+  manufacturer   Manufacturer @relation(fields: [manufacturerId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  manufacturerId Int
+
+  name     String
+  bodyType BodyType
+  segment  Segment
+  // A model can have multiple variants (battery, ranges, etc.)
+  variants VehicleVariant[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([manufacturerId, name]) // Ensure unique model names per manufacturer (e.g. BMW Group iX3)
+  @@index([manufacturerId])
+}
+
+// Represents a specific configuration/variant of a model (battery, range, charging type, price)
+model VehicleVariant {
+  id      Int          @id @default(autoincrement())
+  model   VehicleModel @relation(fields: [modelId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  modelId Int
+
+  // Spec-level attributes
+  batteryKwh   Int
+  rangeKm      Int
+  chargingType ChargingType
+  priceEur     Decimal      @db.Decimal(12, 2)
+
+  // Each variant can appear in many trips
+  trips Trip[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Prevent duplicates of the same spec combination for a model
+  @@unique([modelId, batteryKwh, rangeKm, chargingType])
+  @@index([modelId])
+}
+
+// Represents a geographic location (city, country)
+model Location {
+  id      Int    @id @default(autoincrement())
+  city    String
+  country String
+
+  // Used for both trip origins and destinations
+  // Two separate relations from Trip
+  originTrips      Trip[] @relation("OriginTrips")
+  destinationTrips Trip[] @relation("DestinationTrips")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Prevent duplicate city-country pairs (e.g. only one "New York, United States")
+  @@unique([city, country])
+  @@index([country, city])
+}
+
+// Main Entity: Trip
+model Trip {
+  id Int @id @default(autoincrement())
+
+  // Date of the trip
+  tripDate DateTime
+
+  // Trip-level metrics
+  distanceKm                  Int
+  co2_g_per_km                Int
+  grid_intensity_gco2_per_kwh Int
+
+  // Foreign keys
+  vehicleVariant   VehicleVariant @relation(fields: [vehicleVariantId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  vehicleVariantId Int
+
+  origin   Location @relation("OriginTrips", fields: [originId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  originId Int
+
+  destination   Location @relation("DestinationTrips", fields: [destinationId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  destinationId Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tripDate])
+  @@index([vehicleVariantId])
+  @@index([originId])
+  @@index([destinationId])
+}
