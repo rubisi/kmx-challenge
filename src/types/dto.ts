@@ -19,3 +19,7 @@ export type TripCreateDTO = {
   co2_g_per_km: number;
   grid_intensity_gco2_per_kwh: number;
 };
+
+export type TripUpdateDTO = Partial<TripCreateDTO> & { // Only provided fields will be updated; others will remain unchanged
+  trip_date?: string;
+};
