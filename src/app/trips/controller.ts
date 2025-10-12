@@ -34,4 +34,14 @@ export const TripController = {
       next(e);
     }
   },
+  // DELETE /trips/:id
+  deleteTrip: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = Number(req.params.id);
+      const result = await service.deleteTrip(id);
+      res.json(result);
+    } catch (e) {
+      next(e);
+    }
+  },
 };

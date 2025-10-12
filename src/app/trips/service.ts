@@ -298,7 +298,7 @@ export class TripService {
         ...(patch.trip_date
           ? { tripDate: parseDateDDMMYYYY(patch.trip_date) }
           : {}),
-          // Metric fields: only update if explicitly provided
+        // Metric fields: only update if explicitly provided
         ...(patch.distance_km != null ? { distanceKm: patch.distance_km } : {}),
         ...(patch.co2_g_per_km != null
           ? { co2_g_per_km: patch.co2_g_per_km }
@@ -324,4 +324,86 @@ export class TripService {
 
     return updated;
   }
-}
+
+  // Delete a trip by ID
+  async deleteTrip(id: number) {
+    // Delete the trip and fetch the FK relations. We need these to do cleanup of potentially unreferenced related entities
+    const deleted = await prisma.trip.delete({
+      where: { id },
+      include: {
+        vehicleVariant: {
+          include: { model: { include: { manufacturer: true } } },
+        },
+        origin: true,
+        destination: true,
+      },
+    });
+
+    // Run cleanup in a transaction so counts and deletes are consistent
+    await prisma.$transaction(async (tx) => {
+      // --- Vehicle-related cleanup ---
+
+      // If no other Trip uses this VehicleVariant, we can delete it
+      const remainingTripsForVariant = await tx.trip.count({
+        where: { vehicleVariantId: deleted.vehicleVariantId },
+      });
+
+      if (remainingTripsForVariant === 0) {
+        // Delete the variant itself
+        const modelId = deleted.vehicleVariant.modelId;
+        await tx.vehicleVariant.delete({
+          where: { id: deleted.vehicleVariantId },
+        });
+
+        // If that was the last variant under its model, delete the model too
+        const remainingVariantsForModel = await tx.vehicleVariant.count({
+          where: { modelId },
+        });
+        if (remainingVariantsForModel === 0) {
+          const manufacturerId = deleted.vehicleVariant.model.manufacturerId;
+          await tx.vehicleModel.delete({ where: { id: modelId } });
+
+          // And if that model was the manufacturer’s last model, remove the manufacturer too
+          const remainingModelsForManufacturer = await tx.vehicleModel.count({
+            where: { manufacturerId },
+          });
+          if (remainingModelsForManufacturer === 0) {
+            await tx.manufacturer.delete({ where: { id: manufacturerId } });
+          }
+        }
+      }
+
+      // --- Location cleanup (origin) ---
+      // Since the same location can be origin for some trips and destination for others,
+      // only delete when the location id is not used in either column
+      const originReferenced = await tx.trip.count({
+        where: {
+          OR: [
+            { originId: deleted.originId },
+            { destinationId: deleted.originId },
+          ],
+        },
+      });
+      if (originReferenced === 0) {
+        await tx.location.delete({ where: { id: deleted.originId } });
+      }
+
+      // --- Location cleanup (destination) ---
+      // Since the same location can be origin for some trips and destination for others,
+      // only delete when the location id is not used in either column
+      const destinationReferenced = await tx.trip.count({
+        where: {
+          OR: [
+            { originId: deleted.destinationId },
+            { destinationId: deleted.destinationId },
+          ],
+        },
+      });
+      if (destinationReferenced === 0) {
+        await tx.location.delete({ where: { id: deleted.destinationId } });
+      }
+    });
+
+    return { ok: true };
+  }
+};
