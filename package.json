@@ -6,7 +6,8 @@
 	"scripts": {
 		"start:server": "tsx src/app/index.ts",
 		"start:import": "tsx src/import/index.ts",
-		"test": "vitest",
+		"test": "vitest run",
+		"test:watch": "vitest",
 		"lint": "biome check",
 		"lint:fix": "biome check --fix",
 		"prisma:generate": "pnpx prisma generate",
