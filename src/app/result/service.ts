@@ -1,11 +1,15 @@
+import { prisma } from "../../lib/prisma";
 export class ResultService {
-	getEntityStatistics() {
-		// Replace the following line with your own implementation
-		return this.getExampleStatistics();
-	}
+  async getEntityStatistics() {
+    const [manufacturers, models, variants, locations, trips] =
+      await Promise.all([
+        prisma.manufacturer.count(),
+        prisma.vehicleModel.count(),
+        prisma.vehicleVariant.count(),
+        prisma.location.count(),
+        prisma.trip.count(),
+      ]);
 
-	// This is merely a demo function that returns example statistics.
-	getExampleStatistics() {
-		return { vehicles: 100, routes: 72, locations: 42 };
-	}
+    return { manufacturers, models, variants, locations, trips };
+  }
 }
