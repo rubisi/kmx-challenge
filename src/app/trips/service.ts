@@ -5,10 +5,48 @@ import type { TripCreateDTO, TripUpdateDTO } from "../../types/dto";
 const toEnum = (raw: string) =>
   raw.trim().toUpperCase().replace(/\s+/g, "_").replace(/-/g, "_");
 
-// Parse date in DD/MM/YYYY format to a Date object (in UTC)
-const parseDateDDMMYYYY = (s: string) => {
-  const [dd, mm, yyyy] = s.split("/");
-  return new Date(Date.UTC(Number(yyyy), Number(mm) - 1, Number(dd), 0, 0, 0));
+// Parse date 
+// Accepts: "DD/MM/YYYY" or "YYYY-MM-DD" or Date
+const parseTripDate = (input: unknown): Date => {
+  if (input instanceof Date) {
+    if (isNaN(input.getTime())) throw new Error("Invalid trip_date Date");
+    // normalize to UTC midnight
+    return new Date(Date.UTC(input.getUTCFullYear(), input.getUTCMonth(), input.getUTCDate(), 0, 0, 0));
+  }
+
+  if (typeof input === "string") {
+    const s = input.trim();
+
+    // DD/MM/YYYY
+    const m1 = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s);
+    if (m1) {
+      const [, dd, mm, yyyy] = m1;
+      return new Date(
+        Date.UTC(Number(yyyy), Number(mm) - 1, Number(dd), 0, 0, 0)
+      );
+    }
+
+    // YYYY-MM-DD
+    const m2 = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+    if (m2) {
+      const [, yyyy, mm, dd] = m2;
+      return new Date(
+        Date.UTC(Number(yyyy), Number(mm) - 1, Number(dd), 0, 0, 0)
+      );
+    }
+
+    // Last resort: Date.parse
+    const d = new Date(s);
+    if (!isNaN(d.getTime())) {
+      return new Date(
+        Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 0, 0, 0)
+      );
+    }
+  }
+
+  throw new Error(
+    'Invalid trip_date format. Expected "DD/MM/YYYY" or "YYYY-MM-DD".'
+  );
 };
 
 export class TripService {
@@ -53,7 +91,7 @@ export class TripService {
     const bodyType = toEnum(row.body_type);
     const segment = toEnum(row.segment);
     const chargingType = toEnum(row.charging_type);
-    const tripDate = parseDateDDMMYYYY(row.trip_date);
+    const tripDate = parseTripDate(row.trip_date);
 
     // Insert related entities (We use "Upsert" to ensure we don't create duplicates if the same entity already exists)
     const manufacturer = await prisma.manufacturer.upsert({
@@ -296,7 +334,7 @@ export class TripService {
       where: { id },
       data: {
         ...(patch.trip_date
-          ? { tripDate: parseDateDDMMYYYY(patch.trip_date) }
+          ? { tripDate: parseTripDate(patch.trip_date) }
           : {}),
         // Metric fields: only update if explicitly provided
         ...(patch.distance_km != null ? { distanceKm: patch.distance_km } : {}),
