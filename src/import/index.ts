@@ -2,6 +2,9 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { sendRequest } from "../lib/client";
 import { parseCsvToJson } from "../lib/parser";
+import "dotenv/config";
+
+const BASE = process.env.API_BASE_URL ?? "http://localhost:3000";
 
 const runImporter = async () => {
 	console.log("Starting import of CSV file!");

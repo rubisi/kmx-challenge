@@ -1,8 +1,9 @@
 import express, { type Express } from "express";
 import { ResultRouter } from "./result/router";
 import { TripRouter } from "./trips/router";
+import "dotenv/config";
 
-const port = 3000;
+const port = Number(process.env.PORT ?? 3000);
 
 export const server: Express = express();
 server.use(express.json());
