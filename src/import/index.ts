@@ -6,6 +6,15 @@ import "dotenv/config";
 
 const BASE = process.env.API_BASE_URL ?? "http://localhost:3000";
 
+const isMeaningfulRow = (row: any) =>
+  row &&
+  Object.values(row).some((v) => {
+    if (v == null) return false; // null/undefined
+    if (typeof v === "number") return true; // a number is meaningful
+    const s = String(v).trim();
+    return s.length > 0; // non-empty string
+  });
+
 const runImporter = async () => {
   console.log("Starting import of CSV file!");
 
@@ -19,9 +28,9 @@ const runImporter = async () => {
 
   // 2. Iterate over the array and process each row asynchronously
   for (const row of rows) {
-    if (!row || Object.keys(row).length === 0) continue; // skip blank lines
+    if (!isMeaningfulRow(row)) continue; // skip trailing/empty CSV rows
     try {
-      console.log(row);
+      // console.log(row);
       // 3. Consume the `/POST` endpoint of your main entity to save each row
       await sendRequest(`${BASE}/trips`, "POST", row);
       success++;
