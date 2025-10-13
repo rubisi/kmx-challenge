@@ -47,7 +47,7 @@ describe("Importer script (src/import/index.ts)", () => {
 		app.use(express.json());
 		app.use("/trips", TripRouter);
 		app.use("/result", ResultRouter);
-		
+
 		await new Promise<void>((resolve) => {
 			server = app.listen(0, () => resolve());
 		});
