@@ -59,6 +59,7 @@ const parseTripDate = (input: unknown): Date => {
 };
 
 export class TripService {
+	//  --- GET /trips ---
 	// Return a paginated list of trips with related data
 	async getTrips(page = 1, limit = 10) {
 		// Default to page 1, limit 10
@@ -94,6 +95,7 @@ export class TripService {
 		};
 	}
 
+	//  --- POST /trips ---
 	// Create a trip from a single CSV-shaped JSON row
 	async createFromCsvRow(row: TripCreateDTO) {
 		// Normalize enums & parse date
@@ -197,6 +199,7 @@ export class TripService {
 		});
 	}
 
+	//  --- PUT /trips/:id ---
 	// Update a trip by ID
 	async updateTrip(id: number, patch: TripUpdateDTO) {
 		// Load current trip so we can backfill missing fields and know current links
@@ -372,6 +375,7 @@ export class TripService {
 		return updated;
 	}
 
+	//  --- DELETE /trips/:id ---
 	// Delete a trip by ID
 	async deleteTrip(id: number) {
 		// Delete the trip and fetch the FK relations. We need these to do cleanup of potentially unreferenced related entities
