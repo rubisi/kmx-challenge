@@ -284,6 +284,9 @@ Request body schema:
     "destination_country": "partial match (case-insensitive)"
   }
 }
+
+> **Note:** Filters are **only supported for `trips`**. Other tables ignore `filters`.
+
 ```
 Examples:
 ```bash
