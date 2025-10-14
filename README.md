@@ -256,7 +256,6 @@ Entity counts: {
 
 ### Export
 7. **`POST /export`**: Generate and download a CSV file for any supported table
-- Generate and download a CSV export from the database.
 - **Request body**: JSON (see schema below)
 - **Response**: text/csv; charset=utf-8 with Content-Disposition: attachment; filename="<table>-export.csv"
 
