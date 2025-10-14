@@ -1,69 +1,21 @@
 # KMX Coding Challenge
 
-## Introduction
-As part of our onboarding process, you are expected to build a backend service that manages electric vehicle trip data. The system should shift data between its service layer and a PostgreSQL database while exposing RESTful API endpoints. Main emphasis is placed on demonstrating your knowledge of RESTful API design, database modeling, and testing practices.
+## Overview
+This project implements a backend service that manages electric vehicle trip data.
+It demonstrates RESTful API design, database normalization using Prisma ORM, and integration testing using Vitest + Testcontainers.
 
-Fork this repository and create your own repository to get started.
+The system supports:
+- CRUD operations for trip data
+- Automatic CSV import
+- Entity statistics
+- Optional CSV export
 
-**Time Allocation**: You have **1 week** to complete this challenge.
-
-## Understanding the Data
-
-The provided CSV file `./data/input.csv` contains electric vehicle trip records. Your first task is to analyse this data and identify the entities and relationships that should be modeled in your database schema.
-
-## Tasks
-
-For the following task, a skeleton implementation is provided. You need to complete the implementation by adding the necessary code to handle the task.
-
-### Core Requirements
-1. **Database Design**
-   - Analyse the CSV file to identify possible entities and their relationships
-   - Use Prisma ORM to design the database schema based on your analysis
-   - Ensure proper normalization and foreign key relationships
-
-2. **API Implementation**
-   Implement the following endpoints for the **main entity** (which you need to identify):
-
-   - **`GET /{main-entity}`**: Retrieve records with default pagination (10 items per page)
-     - Support query parameters: `page`, `limit`
-     - Return total count and pagination metadata
-
-   - **`POST /{main-entity}`**: Create a new record from CSV data
-     - Accept a single CSV row and parse it into multiple entities
-     - Insert data into respective tables maintaining relationships
-
-   - **`PUT /{main-entity}/:id`**: Update record data
-     - Update the main entity
-     - Optionally update related entities when they are directly modified
-
-   - **`DELETE /{main-entity}/:id`**: Delete a record
-     - Remove the main entity record and clean up orphaned related entities
-     - Do not delete shared entities that may be referenced by other records
-
-3. **Additional Endpoints**
-   - **`GET /result`**: Provide record counts per entity type
-   - **`POST /import`**: Bulk import endpoint for processing the entire CSV file
-
-4. **Data Import Utility**
-   - Create a standalone importer that uses the `POST /{main-entity}` endpoint
-   - Process the CSV file row by row with proper error handling
-
-### Testing Requirements
-Write comprehensive tests using Testcontainers:
-
-1. **CRUD Tests**: Four tests covering all main entity endpoints (GET, POST, PUT, DELETE)
-2. **Import Test**: Test loading the complete CSV file into the database
-
-### Optional Enhancement
-- **`POST /export`**: Generate CSV file based on query parameters for specific tables
-
-## Technical Requirements
-
-### Tech Stack
+## Tech Stack
 - **Runtime**: Node.js with TypeScript
 - **Framework**: Express.js
 - **Database**: PostgreSQL with Prisma ORM
 - **Testing**: Vitest with Testcontainers
+- **CSV Parsing**: Papa Parse
 - **Package Manager**: pnpm
 
 ## Getting Started
@@ -72,6 +24,7 @@ Write comprehensive tests using Testcontainers:
 - Node.js (v18 or higher)
 - pnpm package manager
 - Docker (for PostgreSQL and tests)
+
 
 ### Setup Instructions
 
@@ -107,11 +60,14 @@ pnpm install
 # Start the server
 pnpm start:server
 
-# Run the importer
+# Run the CSV importer script (data/input.csv)
 pnpm start:import
 
-# Run tests
+# Run the test suite once
 pnpm test
+
+# Watch tests interactively
+pnpm test:watch
 
 # Run linter
 pnpm lint
@@ -132,53 +88,283 @@ docker stop kmx-postgres
 docker rm kmx-postgres
 ```
 
-## Submission Guidelines
-1. **Code Repository**
-   - Ensure all code is committed and pushed
-   - Include a clear commit history
-   - Remove any sensitive information
+## Database Schema (Entities) Overview
+- Manufacturer (EV manufacturer e.g. BMW Group)
+- VehicleModel (Model line e.g. iX3, Nexon EV)
+- VehicleVariant (Battery/range variant of a model)
+- Location (Origin/Destination city + country)
+- Trip (**Main Entity** EV trip)
 
-2. **Documentation**
-   - Update this README with any additional setup steps
-   - Document any assumptions or design decisions
-   - Include API documentation or examples
+## API Documentation
 
-3. **Database Schema**
-   - Include your final Prisma schema
-   - Ensure migrations are included
+This backend exposes RESTful endpoints for managing trip data and related entities.
 
-4. **Testing**
-   - All tests should pass
+### Trips
 
-## Documentation & Resources
+**`GET /trips`**: Retrieve records with default pagination (10 items per page)
 
-Here are helpful links to the key technologies used in this challenge:
+Query parameters: `page`, `limit`
+Response Example
 
-### Core Technologies
-- **[Node.js](https://nodejs.org/en/docs/)** - JavaScript runtime environment
-- **[TypeScript](https://www.typescriptlang.org/docs/)** - Typed JavaScript at scale
-- **[Express.js](https://expressjs.com/)** - Fast, unopinionated web framework for Node.js
+```bash
+{
+  "data": [
+    {
+      "id": 1,
+      "tripDate": "2025-02-10T00:00:00.000Z",
+      "distanceKm": 5813,
+      "vehicleVariant": {
+        "batteryKwh": 80,
+        "rangeKm": 463,
+        "chargingType": "DC",
+        "model": {
+          "name": "iX3",
+          "manufacturer": { "name": "BMW Group" }
+        }
+      },
+      "origin": { "city": "New York", "country": "United States" },
+      "destination": { "city": "Casablanca", "country": "Morocco" }
+    }
+  ],
+  "meta": { "page": 1, "limit": 10, "total": 25, "pages": 3 }
+}
+```
 
-### Database & ORM
-- **[PostgreSQL](https://www.postgresql.org/docs/)** - Advanced open source relational database
-- **[Prisma](https://www.prisma.io/docs)** - Next-generation TypeScript ORM
-  - [Schema Reference](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference)
-  - [Client API](https://www.prisma.io/docs/reference/api-reference/prisma-client-reference)
+**`POST /trips`**: Create a new record from CSV data. Accept a single CSV row and parse it into multiple entities
 
-### Testing
-- **[Vitest](https://vitest.dev/)** - Fast unit test framework powered by Vite
-- **[Testcontainers](https://testcontainers.com/)** - Integration testing with real dependencies
-  - [Node.js Guide](https://node.testcontainers.org/)
+Request Example
+```bash
+{
+  "trip_date": "10/02/2025",
+  "manufacturer": "BMW Group",
+  "model": "iX3",
+  "body_type": "Crossover",
+  "segment": "Mid-size",
+  "battery_kwh": 80,
+  "range_km": 463,
+  "charging_type": "DC",
+  "price_eur": 70157,
+  "origin_city": "New York",
+  "origin_country": "United States",
+  "destination_city": "Casablanca",
+  "destination_country": "Morocco",
+  "distance_km": 5813,
+  "co2_g_per_km": 58,
+  "grid_intensity_gco2_per_kwh": 350
+}
+```
+Response Example
+```bash
+{
+   "id": 1,
+   "tripDate": "2025-02-10T00:00:00.000Z",
+   "distanceKm": 5813,
+   "co2_g_per_km": 58,
+   "grid_intensity_gco2_per_kwh": 350
+   "vehicleVariantId": 2,
+   "originId": 3,
+   "destinationId": 4
+    "createdAt": "2025-10-13T21:52:44.240Z",
+    "updatedAt": "2025-10-13T21:52:44.240Z"
+}
+```
 
-### Package Management
-- **[pnpm](https://pnpm.io/)** - Fast, disk space efficient package manager
-  - [CLI Commands](https://pnpm.io/cli/add)
+**`PUT /trips/:id`**: Update the main entity and update related entities when they are directly modified
 
-### Additional Libraries
-- **[Papa Parse](https://www.papaparse.com/)** - Powerful CSV parser for JavaScript
+Request Example
+```bash
+{
+  "trip_date": "13/10/2025",
+  "manufacturer": "Tata Motors",
+  "model": "Nexon EVV",
+  "body_type": "Compact SUV",
+  "segment": "Luxury",
+  "battery_kwh": 40,
+  "range_km": 224,
+  "charging_type": "AC",
+  "price_eur": 111873,
+  "origin_city": "Singapore",
+  "origin_country": "Singapore",
+  "destination_city": "London",
+  "destination_country": "United Kingdom",
+  "distance_km": 10852,
+  "co2_g_per_km": 55,
+  "grid_intensity_gco2_per_kwh": 250
+}
+```
+Response Example
+```bash
+{
+    "id": 210,
+    "tripDate": "2025-10-13T00:00:00.000Z",
+    "distanceKm": 10852,
+    "co2_g_per_km": 55,
+    "grid_intensity_gco2_per_kwh": 250,
+    "vehicleVariantId": 1183,
+    "originId": 75,
+    "destinationId": 76,
+    "createdAt": "2025-10-13T20:29:45.722Z",
+    "updatedAt": "2025-10-14T00:24:56.842Z",
+}
+```
 
-## Questions?
+**`DELETE /trips/:id`**: Remove the main entity record and clean up orphaned related entities
 
-If you encounter any blockers or have questions about requirements, please don't hesitate to reach out. We're here to help you succeed!
+Response Example
+```bash
+{
+    "ok": true
+}
+```
+### Result
 
-Good luck! 🚀
+**`GET /result`**: Retrieve entity record counts
+
+Response Example
+
+```bash
+{
+  "manufacturers": 5,
+  "models": 8,
+  "variants": 12,
+  "locations": 20,
+  "trips": 40
+}
+```
+### Import
+
+**`POST /import`**: Bulk-imports trips from the provided CSV file (data/input.csv).
+
+Triggered by the following importer script:
+
+```bash
+   # Run the CSV importer script (data/input.csv)
+   pnpm start:import
+```
+Response Example
+
+```bash
+Import summary: ok=100, fail=0
+Entity counts: {
+  "manufacturers": 21,
+  "models": 35,
+  "variants": 100,
+  "locations": 35,
+  "trips": 100
+}
+```
+
+### Export
+**`POST /export`**: Generate and download a CSV file for any supported table
+- Generate and download a CSV export from the database.
+- **Request body**: JSON (see schema below)
+- **Response**: text/csv; charset=utf-8 with Content-Disposition: attachment; filename="<table>-export.csv"
+
+Supported tables: `trips`, `manufacturers`, `vehicleModels`, `vehicleVariants`, `locations`
+
+Field presets (defaults + allowlist):
+**`trips`**: `id`, `tripDate`, `distanceKm`, `co2_g_per_km`, `grid_intensity_gco2_per_kwh`, `vehicleVariantId`, `originId`, `destinationId`, `createdAt`, `updatedAt`
+**`manufacturers`**: `id`, `name`, `createdAt`, `updatedAt`
+**`vehicleModels`**: `id`, `manufacturerId`, `name`, `bodyType`, `segment`, `createdAt`, `updatedAt`
+**`vehicleVariants`**: `id`, `modelId`, `batteryKwh`, `rangeKm`, `chargingType`, `priceEur`, `createdAt`, `updatedAt`
+**`locations`**: `id`, `city`, `country`, `createdAt`, `updatedAt`
+
+Request body schema:
+```bash
+{
+  "table": "trips | manufacturers | vehicleModels | vehicleVariants | locations",
+  "fields": ["optional", "list", "of", "valid", "fields"],
+  "limit": 1000,
+  "order": "asc | desc",
+  "filters": {
+    "date_from": "YYYY-MM-DD or DD/MM/YYYY",
+    "date_to": "YYYY-MM-DD or DD/MM/YYYY",
+    "manufacturer": "partial match (case-insensitive)",
+    "model": "partial match (case-insensitive)",
+    "origin_country": "partial match (case-insensitive)",
+    "destination_country": "partial match (case-insensitive)"
+  }
+}
+```
+Examples:
+```bash
+# Export trips with filters
+curl -X POST "http://localhost:3000/export" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "table": "trips",
+    "fields": ["id","tripDate","distanceKm","originId","destinationId"],
+    "limit": 1000,
+    "order": "desc",
+    "filters": {
+      "date_from": "2025-01-01",
+      "date_to": "2025-12-31",
+      "manufacturer": "BMW",
+      "origin_country": "United States"
+    }
+  }' -o trips-export.csv
+
+# Export manufacturers (no filters)
+curl -X POST "http://localhost:3000/export" \
+  -H "Content-Type: application/json" \
+  -d '{ "table": "manufacturers", "order": "asc", "limit": 200 }' \
+  -o manufacturers.csv
+```
+Response Example
+- Content-Type: text/csv
+- Returns a downloadable CSV file
+
+## Design Decisions & Assumptions
+
+This section outlines key implementation choices and assumptions made during development.
+
+### Main Entity
+- The **main entity** in the system is `Trip`.
+- Each trip connects two `Location` entities (origin and destination) and references one `VehicleVariant`, which itself is linked to a `VehicleModel` and a `Manufacturer`.
+
+### Database Normalization
+- All categorical attributes (e.g., manufacturer, model, location) are stored in separate normalized tables
+- Relations:
+   - `Manufacturer` -> `VehicleModel` -> `VehicleVariant`
+   - `Trip` -> (`Origin` + `Destination` as `Location`)
+
+### Importer Design
+- The importer (`src/import/index.ts`) reads data/input.csv line-by-line using Papa Parse.
+- For each row:
+   - Converts it to a TripCreateDTO.
+   - Sends it to POST /trips.
+- Ensures:
+   - Consistency with API logic.
+   - Idempotency (duplicates return existing records).
+   - Error tolerance for invalid rows.
+
+### Idempotency & Cleanup
+- When the same trip data is sent multiple times, the backend returns the existing record instead of creating a duplicate.
+- Shared entities (e.g., manufacturer, locations) are reused across trips.
+- Deletion (DELETE /trips/:id) removes only orphaned records, preserving shared relationships.
+
+### Testing Strategy
+- Tests use Vitest with Testcontainers to spin up ephemeral PostgreSQL instances.
+- Each test:
+   1. Starts a fresh Postgres container.
+   2. Pushes the Prisma schema (`npx prisma db push --force-reset`).
+   3. Runs CRUD and importer tests.
+   4. Tears down the container cleanly.
+- No persistent or local database setup is required.
+- Coverage includes:
+   - CRUD endpoints (`/trips`)
+   - Statistics endpoint (`/result`)
+   - Import functionality (`/import`)
+
+### Assumptions
+- Input CSV has clean, consistent data (no missing columns).
+- All date fields are provided as either `DD/MM/YYYY` or `YYYY-MM-DD`.
+- The importer and API run locally on the same machine (default `http://localhost:3000`).
+- Postgres credentials match those in the `.env` file.
+- No frontend or authentication layer was required per the challenge scope.
+
+## Testing
+- Run the complete integration test suite:
+```bash
+pnpm test
+```
