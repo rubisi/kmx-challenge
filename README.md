@@ -285,9 +285,9 @@ Request body schema:
   }
 }
 
+```
 > **Note:** Filters are **only supported for `trips`**. Other tables ignore `filters`.
 
-```
 Examples:
 ```bash
 # Export trips with filters
