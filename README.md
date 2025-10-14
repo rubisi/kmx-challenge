@@ -101,11 +101,11 @@ This backend exposes RESTful endpoints for managing trip data and related entiti
 
 ### Trips
 
-**`GET /trips`**: Retrieve records with default pagination (10 items per page)
+1. **`GET /trips`**: Retrieve records with default pagination (10 items per page)
 
 Query parameters: `page`, `limit`
-Response Example
 
+Response Example
 ```bash
 {
   "data": [
@@ -130,7 +130,7 @@ Response Example
 }
 ```
 
-**`POST /trips`**: Create a new record from CSV data. Accept a single CSV row and parse it into multiple entities
+2. **`POST /trips`**: Create a new record from CSV data. Accept a single CSV row and parse it into multiple entities
 
 Request Example
 ```bash
@@ -169,7 +169,7 @@ Response Example
 }
 ```
 
-**`PUT /trips/:id`**: Update the main entity and update related entities when they are directly modified
+3. **`PUT /trips/:id`**: Update the main entity and update related entities when they are directly modified
 
 Request Example
 ```bash
@@ -208,7 +208,7 @@ Response Example
 }
 ```
 
-**`DELETE /trips/:id`**: Remove the main entity record and clean up orphaned related entities
+4. **`DELETE /trips/:id`**: Remove the main entity record and clean up orphaned related entities
 
 Response Example
 ```bash
@@ -218,7 +218,7 @@ Response Example
 ```
 ### Result
 
-**`GET /result`**: Retrieve entity record counts
+5. **`GET /result`**: Retrieve entity record counts
 
 Response Example
 
@@ -233,7 +233,7 @@ Response Example
 ```
 ### Import
 
-**`POST /import`**: Bulk-imports trips from the provided CSV file (data/input.csv).
+6. **`POST /import`**: Bulk-imports trips from the provided CSV file (data/input.csv).
 
 Triggered by the following importer script:
 
@@ -255,7 +255,7 @@ Entity counts: {
 ```
 
 ### Export
-**`POST /export`**: Generate and download a CSV file for any supported table
+7. **`POST /export`**: Generate and download a CSV file for any supported table
 - Generate and download a CSV export from the database.
 - **Request body**: JSON (see schema below)
 - **Response**: text/csv; charset=utf-8 with Content-Disposition: attachment; filename="<table>-export.csv"
@@ -263,11 +263,11 @@ Entity counts: {
 Supported tables: `trips`, `manufacturers`, `vehicleModels`, `vehicleVariants`, `locations`
 
 Field presets (defaults + allowlist):
-**`trips`**: `id`, `tripDate`, `distanceKm`, `co2_g_per_km`, `grid_intensity_gco2_per_kwh`, `vehicleVariantId`, `originId`, `destinationId`, `createdAt`, `updatedAt`
-**`manufacturers`**: `id`, `name`, `createdAt`, `updatedAt`
-**`vehicleModels`**: `id`, `manufacturerId`, `name`, `bodyType`, `segment`, `createdAt`, `updatedAt`
-**`vehicleVariants`**: `id`, `modelId`, `batteryKwh`, `rangeKm`, `chargingType`, `priceEur`, `createdAt`, `updatedAt`
-**`locations`**: `id`, `city`, `country`, `createdAt`, `updatedAt`
+- **`trips`**: `id`, `tripDate`, `distanceKm`, `co2_g_per_km`, `grid_intensity_gco2_per_kwh`, `vehicleVariantId`, `originId`, `destinationId`, `createdAt`, `updatedAt`
+- **`manufacturers`**: `id`, `name`, `createdAt`, `updatedAt`
+- **`vehicleModels`**: `id`, `manufacturerId`, `name`, `bodyType`, `segment`, `createdAt`, `updatedAt`
+- **`vehicleVariants`**: `id`, `modelId`, `batteryKwh`, `rangeKm`, `chargingType`, `priceEur`, `createdAt`, `updatedAt`
+- **`locations`**: `id`, `city`, `country`, `createdAt`, `updatedAt`
 
 Request body schema:
 ```bash
@@ -310,7 +310,7 @@ curl -X POST "http://localhost:3000/export" \
   -d '{ "table": "manufacturers", "order": "asc", "limit": 200 }' \
   -o manufacturers.csv
 ```
-Response Example
+Response Example:
 - Content-Type: text/csv
 - Returns a downloadable CSV file
 
@@ -364,7 +364,7 @@ This section outlines key implementation choices and assumptions made during dev
 - No frontend or authentication layer was required per the challenge scope.
 
 ## Testing
-- Run the complete integration test suite:
+Run the complete integration test suite:
 ```bash
 pnpm test
 ```
